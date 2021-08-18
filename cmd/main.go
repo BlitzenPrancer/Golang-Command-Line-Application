@@ -57,7 +57,7 @@ func HandleGet(getCmd *flag.FlagSet, all *bool, id *string) {
 	if *all {
 		// returning all videos
 		videos := getVideos()
-		fmt.Printf("ID \t Title \t URL \t ImageURL \t Description \n")
+		fmt.Printf("ID \t \t Title \t \t \t \t \t \t \t \t \t URL \t \t \t \t \t \t ImageURL \t \t Description \n")
 		// for loop that ranges over the videos to return
 		for _, video := range videos {
 			fmt.Printf("%v \t %v \t %v \t %v \t %v \n", video.Id, video.Title, video.Url, video.Imageurl, video.Description)
