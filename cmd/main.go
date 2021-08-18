@@ -6,39 +6,17 @@ import (
 	"os"
 )
 
-// defining sub commands as well as arguments or flags that this application is going to accept.
+// validate video function
+func ValidateVideo(addCmd *flag.FlagSet, id *string, title *string, url *string, imageUrl *string, description *string) {
 
-func main() {
-	// definition of videos get subcommand
-	getCmd := flag.NewFlagSet("get", flag.ExitOnError)
-	// input for "videos get" command
-	getAll := getCmd.Bool("all", false, "Get all of the videos")
-	getID := getCmd.String("id", "", "YouTube Video ID")
+	addCmd.Parse(os.Args[2:])
 
-	// add command
-	addCmd := flag.NewFlagSet("add", flag.ExitOnError)
-	// adding all the fields
-	addId := addCmd.String("id", "", "Youtube video ID")
-	addTitle := addCmd.String("title", "", "Youtube video Title")
-	addUrl := addCmd.String("url", "", "Youtube vider URL")
-	addImageUrl := addCmd.String("imageurl", "", "Youtube Video Image URL")
-	addDesc := addCmd.String("desc", "", "Youtube video description")
-
-	// doing validation of commands entered by user
-	// checking the length of the argument to check the user had entered the sub command
-	if len(os.Args) < 2 {
-		fmt.Println("expected 'add' or 'get' subcommands")
+	if *id == "" || *title == "" || *url == "" || *imageUrl == "" || *description == "" {
+		fmt.Print("all fields are required for adding a video")
+		addCmd.PrintDefaults()
 		os.Exit(1)
 	}
 
-	// i am invoking those hander functions using switch statement
-	switch os.Args[1] {
-	case "get":
-		HandleGet(getCmd, getAll, getID)
-	case "add":
-		HandleAdd(addCmd, addId, addTitle, addUrl, addImageUrl, addDesc)
-	default:
-	}
 }
 
 // handler function to handle ech of the commands
@@ -47,12 +25,11 @@ func HandleGet(getCmd *flag.FlagSet, all *bool, id *string) {
 	getCmd.Parse(os.Args[2:])
 	// checking the input and validating it
 	if *all == false && *id == "" {
-		fmt.Print("id is required or specify --all flag for showing all videos")
-		// printing defaults
+		fmt.Print("id is required or specify --all for all videos")
 		getCmd.PrintDefaults()
+		// printing defaults
 		os.Exit(1)
 	}
-
 	// if the user enters all flag
 	if *all {
 		// returning all videos
@@ -62,9 +39,9 @@ func HandleGet(getCmd *flag.FlagSet, all *bool, id *string) {
 		for _, video := range videos {
 			fmt.Printf("%v \t %v \t %v \t %v \t %v \n", video.Id, video.Title, video.Url, video.Imageurl, video.Description)
 		}
+
 		return
 	}
-
 	// if the user enters id flag
 	if *id != "" {
 		// getting videos
@@ -85,6 +62,7 @@ func HandleGet(getCmd *flag.FlagSet, all *bool, id *string) {
 
 // for get function
 func HandleAdd(addCmd *flag.FlagSet, id *string, title *string, url *string, imageUrl *string, description *string) {
+
 	ValidateVideo(addCmd, id, title, url, imageUrl, description)
 	// to add the new video i am forming a new struct
 	video := video{
@@ -99,13 +77,39 @@ func HandleAdd(addCmd *flag.FlagSet, id *string, title *string, url *string, ima
 	videos = append(videos, video)
 	// saving the videos back to file
 	saveVideos(videos)
+
 }
 
-// validate video function
-func ValidateVideo(addCmd *flag.FlagSet, id *string, title *string, url *string, imageUrl *string, description *string) {
-	if *id == "" || *title == "" || *url == "" || *imageUrl == "" || *description == "" {
-		fmt.Print("all fields are required for adding a video!!")
-		addCmd.PrintDefaults()
+// defining sub commands as well as arguments or flags that this application is going to accept.
+func main() {
+	// definition of videos get subcommand
+	getCmd := flag.NewFlagSet("get", flag.ExitOnError)
+	// input for "videos get" command
+	getAll := getCmd.Bool("all", false, "Get all videos")
+	getID := getCmd.String("id", "", "YouTube video ID")
+
+	// add command
+	addCmd := flag.NewFlagSet("add", flag.ExitOnError)
+	// adding all the fields
+	addID := addCmd.String("id", "", "YouTube video ID")
+	addTitle := addCmd.String("title", "", "YouTube video Title")
+	addUrl := addCmd.String("url", "", "YouTube video URL")
+	addImageUrl := addCmd.String("imageurl", "", "YouTube video Image URL")
+	addDesc := addCmd.String("desc", "", "YouTube video description")
+	// doing validation of commands entered by user
+	// checking the length of the argument to check the user had entered the sub command
+	if len(os.Args) < 2 {
+		fmt.Println("expected 'get' or 'add' subcommands")
 		os.Exit(1)
 	}
+
+	// i am invoking those handler functions using switch statement
+	switch os.Args[1] {
+	case "get":
+		HandleGet(getCmd, getAll, getID)
+	case "add":
+		HandleAdd(addCmd, addID, addTitle, addUrl, addImageUrl, addDesc)
+	default:
+	}
+
 }

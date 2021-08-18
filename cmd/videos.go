@@ -1,8 +1,7 @@
 // this file will be managing videos like listing them and updating them
-
 package main
 
-// storing the videos as json
+// storing the videos as json, so i am importing json package
 import (
 	"encoding/json"
 	"io/ioutil"
@@ -17,23 +16,6 @@ type video struct {
 	Url         string
 }
 
-// function that will return all the videos from a file
-func getVideos() (videos []video) {
-	// reading the json file using ioutil package
-	fileBytes, err := ioutil.ReadFile("./videos.json")
-	if err != nil {
-		panic(err)
-	}
-
-	// converting byte array(filebytes) into videos slice
-	err = json.Unmarshal(fileBytes, &videos)
-	if err != nil {
-		panic(err)
-	}
-
-	return videos
-}
-
 // function to make changes and save videos back to the file
 func saveVideos(videos []video) {
 	// converting it back to byte array using json.Marshal
@@ -46,4 +28,21 @@ func saveVideos(videos []video) {
 	if err != nil {
 		panic(err)
 	}
+}
+
+// function that will return all the videos from a file
+func getVideos() (videos []video) {
+	// reading the json file using ioutil package
+	fileBytes, err := ioutil.ReadFile("./videos.json")
+	// checking for errors
+	if err != nil {
+		panic(err)
+	}
+	// converting byte array(filebytes) into videos slice
+	err = json.Unmarshal(fileBytes, &videos)
+	// checking for errors
+	if err != nil {
+		panic(err)
+	}
+	return videos
 }
